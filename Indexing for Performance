@@ -1,1 +1,69 @@
+Link: https://app.pluralsight.com/library/courses/sqlserver-indexing-for-performance/table-of-contents
 
+INTRODUCTION
+============
+Introduction-a
+==============
+ Index Types 
+  Sql Server Contain
+	-cluster Row Based
+	-cluster column based
+	-Non Clustered Index Structure
+  Important is Non-Clustered Index
+  Reason : They Support More Efficient Access Method For Getting teh data 
+	   Rather than lets say doing full table scan
+
+  
+ Depending upon the type of Index Uses Casess
+  ->  Support a Seek
+  ->  Index Scan (Not Table Scan it is doing whole rows)
+  ->  Covering a Query (i.e measn your query fetch data will be satisfied with I.e index only
+			i.e means for seek,scan the data and fetching will be done from index instead of table)
+  ->  Covering multiple Queryies
+  ->  Finally supporting the Constraint 
+	 (index used as A Constraint) 
+
+
+ Focus of this course is 
+	-> Through Understand on Row Based index
+	  -> Evaluate Different WorkLoad Characteristics and Options 
+	     Related to SqlServer Versions In Order to know what index 
+	     Choices are available
+
+	  -> Why Certain index are affective why certain are not..?
+  		visual how index are used
+		you can undestand different data access pattern
+		
+	  -> Explain the cost associated with different indexes 		
+		like some indexes are small narrow
+		     some indexes are wide adn larger
+				
+		so we need to understand what are the cost associated
+		with those indexes like how much space,
+	
+
+	  -> Review and Analyze the internal structure using a variety of tools and command 
+		to help troubleshoot the perfromance problem
+
+	      DBCC commands
+		DMVs 
+		
+
+
+
+ 2nd Objective
+ -> Will understand the Covering indexs
+ -> Narrow Index vs Wider Indexe
+ -> Which feature is appropriate for dealing with different Query perfromance problem
+
+
+ i.e makes proactively create more Usefull indexes earlier in your development life cycle..
+
+ 3rd Final Objective
+ ---------------
+  Understand the filter Index 
+	very powerful but very limited usecase
+	
+
+
+ understand how to see query plans and have an unmatched filter index warning and how to resolve them
