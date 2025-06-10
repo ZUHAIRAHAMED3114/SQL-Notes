@@ -67,3 +67,83 @@ Introduction-a
 
 
  understand how to see query plans and have an unmatched filter index warning and how to resolve them
+
+
+
+ Row Based and Column Based Index
+ -------------------------------------
+ Strcutre:
+	1)Heap (no Sorting)
+	2)Row Based Index( sorting based on the particular column)
+	3)Column Based INdex (sorting based on particular row)
+ 
+ Row Based Index :- B++ tree
+ Column Based Index:
+	 -All Rows of a single column stored in a single particular page
+	 -Highly Compressed 
+         -storage of the particular column 
+			not only defined based on
+			-datatype but also how it is storing..?
+ 	
+what is OLTP vs OLAP
+| Feature       | **OLTP**                          | **OLAP** (Online Analytical Processing) |
+| ------------- | --------------------------------- | --------------------------------------- |
+| Purpose       | Day-to-day operations             | Analytical and decision support         |
+| Operations    | Insert, Update, Delete, Read      | Complex reads, aggregations, trends     |
+| Users         | Clerks, cashiers, front-end users | Analysts, executives                    |
+| Data volume   | Low per transaction               | High volume, historical data            |
+| Schema design | Highly normalized                 | Denormalized (star/snowflake schema)    |
+
+
+Requirement
+--------------
+ a.Priority toward data Modification like OLTP
+ b.Many Point Queries (high-selective and return very few rows)
+ c.Priorites toward large scale aggreaget(sum query) with highPercentage or entire dataset evaluation
+ d.OLTP is Priory With Some Point Query Activity
+ e.Some Range Based Query bz Management Want  Real Time Analysis
+ 
+Work Load is OLTP
+-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+->  priorty is over data modification(just like insert,udpate,detele etc...) requirement
+->  Many Point Queries (highly Selective and return low rows) (like seek Queries ) requriemtn
+  For Above two case best one is Row-Based Indexes either clustered or not clustered
+   and you might considered non clustered ColumnStore Index
+-> row based non clustered index are very important
+-> might use non clustered column store index..
+
+WORK LOAD IS DEPEND UPON DESION SUPPORT SYSTEM,RELATIONAL DATA WAREHOUSING
+------------------------------------------------------------------------
+ -IF you are focussing more in analysing
+   like sum of all sales,
+	sum of all customer sales,
+	sum of sales by customers,
+	sum of sales by product
+ 	 
+             above is requirement
+  those above queries you are loooking in large amount of data 
+	
+ -(i.e means above query you are not looking for 
+   certain dataset but for whole dataset or large set of datt)High percentage or Entire dataset is Evaluated often
+ - In this case Colmn structured store index would be a much better job 
+   (i.e is column structured index i.e aggregate  for whole data)
+ - Secondary index also will do (at some places important )
+ - Point queries benefit from row-based non clustered index 
+ 	
+My Environment is not PURE OLTP,Not PURE DSS i.e means Hybird in i.e cases what i have to select
+-----------------------------------------------------------------------------------------------
+ 
+ 1.OLTP is Priory With Some Point Query Activity
+ 2.Some Range Based Query bz Management Want  Real Time Analysis
+ 
+ 1. OLTP is priory with some Point Query at i.e place we need to use row based index
+ 2. some range query with reql time analysis at i.e place we need to use column based index
+ i.e means what iam saying is 
+
+ sol-1 here mix of indexes you need for above two requirement along different table 
+ sol-2 possilbly non-clusterd columnstoreindex if data is partitioned 
+	 
+
+
+
+Differance between Row-based index vs Column-Based Index and Problems
