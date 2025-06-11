@@ -144,6 +144,206 @@ My Environment is not PURE OLTP,Not PURE DSS i.e means Hybird in i.e cases what 
  sol-2 possilbly non-clusterd columnstoreindex if data is partitioned 
 	 
 
+-----
+Row Based Index
+-------------
+Row Compression 
+-------------------------------
+  2) Can Support Point quieries (seeks)
+      (support scan but main is seek)
+  1) Suport data Compressoin 
+  3) Wide  Varities of 
+		Scan
+		SubSet Scan (seek+Scan)
+		Covering Scan (for NonClustered)
+  4) Non Clustered Covering seeks with Partial Scans
+   
+Colum Based Index
+------------------
+  1) Usually Offer Higher Level of Compression
+  2) Support Large-Scale Aggression
+  3) Support Partial Scan with Segment Elimination 
+	
 
 
-Differance between Row-based index vs Column-Based Index and Problems
+Row-based Problems
+==================
+ -1)More tuning work for analsis:
+	MustCreate appropriate index per query 
+ 	and then conslidate 
+  2)Store Multiple Column of data together
+	(not as easily Compressed)
+
+Column-based Problems
+==================
+ 1)No Seek Possible (Minium set of read is row group)
+	Columnstore indexes are optimized for scans, not seeks.
+	Even if your filter is:
+	WHERE CustomerId = 123
+
+	Scan segments for CustomerId
+	Look for matching row group(s)
+	Read full segments (even if only one value matches)
+
+
+
+
+DataWareHousing Before Column store index datbase how it is doing 
+ i.e is some of large range base queries 
+
+ Anwer is views 
+
+Index Views vs Column Store
+---------------------------
+ Indexe Views:
+ -----------------
+  -Limited uses in non-Enterprise edition
+  -Require Certain setting on this seeting need to be udpate in client
+  -For Index view you have to analyse what is column need to be key	
+	must be analyzed /created per query
+  -More Complicated to Create
+  -More Storage Required
+  -More Administrative overhaed/maintenance
+  -More Costly to maintain during insret/updates
+ 
+ COlumn Store INdex:
+ --------------------
+  -No Session Setting Required (very attractive)
+  -Only one Can be Creatd per table 
+  -Very Easier to Create
+  -A Lot less storage Required
+  -Less Adminstrative Overhead/Maintainace 
+  -Might not be able to do insert,updats,depnd upon version
+
+
+Great breakdown! Here's a clean, structured comparison with your points refined and expanded for clarity. I’ve added a few key considerations and clarified the differences further.
+
+---
+
+## **Indexed Views vs Columnstore Indexes**
+
+### 🔍 Purpose:
+
+* **Indexed Views**: Materialize complex queries (joins, aggregates) for reuse.
+* **Columnstore Indexes**: Optimize large-scale analytical queries by enabling fast scans, filtering, and aggregation.
+
+---
+
+## 📌 Indexed Views
+
+### ✅ Pros:
+
+* Precompute expensive joins and aggregates.
+* Can be queried like a regular table.
+* Improves performance for very specific, repetitive queries.
+
+### ❌ Cons:
+
+* 🔒 **Edition Limitation**: Fully supported only in **Enterprise Edition** (with SCHEMABINDING); read-only in Standard Edition.
+* ⚠ **Session Settings Required**:
+
+  * Must enable:
+
+    ```sql
+    SET ANSI_NULLS ON;
+    SET ANSI_WARNINGS ON;
+    SET CONCAT_NULL_YIELDS_NULL ON;
+    SET QUOTED_IDENTIFIER ON;
+    SET ARITHABORT ON;
+    SET NUMERIC_ROUNDABORT OFF;
+    ```
+* ⚙ **Per-query Design**:
+
+  * Indexed view must be custom-built for each query.
+  * You must choose the **right key columns** and **index definition**.
+* 🧩 **Complex to Create**:
+
+  * Syntax restrictions: No `TOP`, `DISTINCT`, outer joins, `UNION`, etc.
+  * Requires `SCHEMABINDING`.
+* 💾 **More Storage**:
+
+  * Materialized data is stored **redundantly**, increasing disk usage.
+* 🧹 **Higher Maintenance Cost**:
+
+  * Every insert, update, delete to base table triggers maintenance on the indexed view.
+  * Adds CPU & I/O overhead.
+* 👨‍🔧 **Administrative Overhead**:
+
+  * More objects to manage, more complexity in schema design.
+
+---
+
+## 📌 Columnstore Indexes
+
+### ✅ Pros:
+....
+....
+* 🚫 **No Session Settings Required**:
+
+  * Queries work seamlessly—no changes to SET options needed.
+* 💨 **Faster Aggregation & Filtering**:
+
+  * Scans only needed **columns** instead of entire rows.
+* 🧠 **Rowgroup Elimination**:
+
+  * Skips large data chunks using segment metadata (min/max).
+* 🧱 **High Compression**:
+
+  * Up to 10x data compression reduces I/O.
+* ⚙ **Simpler to Add**:
+
+  * Can be added to existing schema easily.
+* 📊 **Batch Mode Execution**:
+
+  * Processes data in vectorized batches — CPU-efficient for large workloads.
+* 🚀 **Best for OLAP/DSS**:
+
+  * Ideal for reporting, analytics, data marts.
+
+### ❌ Cons:
+............
+............
+* 📏 **Only One Clustered Columnstore Index per Table**:
+
+  * But you can still create **nonclustered columnstore indexes** on specific columns.
+* ✏ **Poor for Point Lookups or OLTP**:
+
+  * Less efficient for single-row operations unless paired with rowstore indexes.
+* 🛠 **Insert/Update Performance**:
+
+  * Moderate to slow performance on write-heavy tables (though SQL Server uses a delta store to help).
+* 🔧 **No Seek Support**:
+
+  * Scans only; cannot use seek like B-trees.
+
+---
+
+## 🧾 Summary Table
+
+| Feature                            | Indexed View                 | Columnstore Index                  |
+| ---------------------------------- | ---------------------------- | ---------------------------------- |
+| **Main Use**                       | Precomputed joins/aggregates | High-speed analytics/aggregation   |
+| **Session Settings Required**      | ✅ Yes                        | ❌ No                               |
+| **OLTP Performance**               | ❌ Poor on inserts/updates    | ❌ Poor (but manageable)            |
+| **OLAP Performance**               | ⚠ Good (if predesigned)      | ✅ Excellent                        |
+| **Ease of Creation**               | ❌ Complex                    | ✅ Simple                           |
+| **Maintenance Cost**               | 🔺 High                      | ⚠ Moderate                         |
+| **Compression**                    | ❌ No                         | ✅ Yes                              |
+| **Supported in Editions**          | 🔒 Fully in Enterprise only  | ✅ Fully supported (2016+ Standard) |
+| **Multiple per Table**             | ✅ Multiple Indexed Views     | ❌ Only one Clustered Columnstore   |
+| **Flexibility for Ad-hoc Queries** | ❌ Low                        | ✅ High                             |
+| **Storage Usage**                  | 🔺 High (data duplication)   | ✅ Low (compressed segments)        |
+
+---
+
+## ✅ Final Recommendation
+
+| Scenario                                         | Use                                 |
+| ------------------------------------------------ | ----------------------------------- |
+| Fixed, predictable queries with joins/aggregates | **Indexed Views**                   |
+| Exploratory queries, dashboards, large datasets  | **Columnstore Indexes**             |
+| Mixed OLTP + OLAP workload                       | **Hybrid** (Columnstore + Rowstore) |
+
+Let me know if you want example scripts for both!
+	
+ 
