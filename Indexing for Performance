@@ -8,10 +8,11 @@ Introduction-a
   Sql Server Contain
 	-cluster Row Based
 	-cluster column based
-	-Non Clustered Index Structure
-  Important is Non-Clustered Index
-  Reason : They Support More Efficient Access Method For Getting teh data 
-	   Rather than lets say doing full table scan
+	-Non Clustered Index Structure (Row,Column)
+
+	Important is Non-Clustered Index
+  	Reason :   They Support More Efficient Access Method For Getting teh data 
+		   Rather than lets say doing full table scan
 
   
  Depending upon the type of Index Uses Casess
@@ -25,17 +26,16 @@ Introduction-a
 
 
  Focus of this course is 
-	-> Through Understand on Row Based index
-	  -> Evaluate Different WorkLoad Characteristics and Options 
+	  -> Through Understand on Row Based index
+	  
+          -> Evaluate Different WorkLoad Characteristics and Options 
 	     Related to SqlServer Versions In Order to know what index 
 	     Choices are available
-
 	  -> Why Certain index are affective why certain are not..?
   		visual how index are used
 		you can undestand different data access pattern
-		
 	  -> Explain the cost associated with different indexes 		
-		like some indexes are small narrow
+		    like some indexes are small narrow
 		     some indexes are wide adn larger
 				
 		so we need to understand what are the cost associated
@@ -346,4 +346,31 @@ Great breakdown! Here's a clean, structured comparison with your points refined 
 
 Let me know if you want example scripts for both!
 	
+====================================================================================================================
+ ROW BASED INDEX CONCEPT
+====================================================================================================================
+ Row Based index Concept
+ ------------------------
+ -Basic structure
+ -Index analogies
+ -scan vs seek
+ -Bookmark lookup
+
  
+Table has clustered index or Not
+ 
+ If Table has not Clustered Index (HEAP)
+  i.e means Data is  completely unordered
+  the only way you can direclty reference is link to table record 
+  Non Clustered index will contain the pointer to refere the direct physical record addres
+
+IF Table has Clustered Index 
+ -Data to be Ordered by Clustering Key
+ -Non Clustere index will contain the Clustered Key of table record to point instead of physical
+
+ 
+NOTE 
+ BASE TABLE STRUCTURE IS NOT AFFECTED BY NON CLUSTERED INDEX BUT IN TURNS IT AFFECT THEIR STRUCTURE
+  but Non cluster index structure is differnt for heap and cluster index table 
+  why this intereseting i.e it could be possibly impact i.e structure making them more or less efficient
+  so Understand how i.e (heap or clustered )effect non clustered index is important
