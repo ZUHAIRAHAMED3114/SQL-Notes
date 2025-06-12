@@ -374,3 +374,34 @@ NOTE
   but Non cluster index structure is differnt for heap and cluster index table 
   why this intereseting i.e it could be possibly impact i.e structure making them more or less efficient
   so Understand how i.e (heap or clustered )effect non clustered index is important
+
+
+
+
+
+
+
+ When are Heap Appropriate
+ ------------------------
+  This below is the fantastice use case of Heap...?
+ -Heap can be great for high Performance data loading and staging tables
+  -do parallelize load
+  -this make increase load times as linear 
+  -you have parralllel threads
+  -
+  When iam using staging table to load data in the where house
+  i will use heap will do high perfromance data load  
+  and then build the appropriate clustered index on the staging table
+  before i switch i.e table to partitioned table 
+	
+  https://app.pluralsight.com/ilx/video-courses/7fd63591-f9d3-4938-ba00-aaaee97dffb4/ae8c5260-8dd7-4e5f-9156-66ab286db5e9/f035be29-7329-40d9-ba49-401dc515fdf4
+
+ you can check the article for highperformance for bulk loading 
+  
+ -
+ 
+
+
+
+
+
